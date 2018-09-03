@@ -1,31 +1,39 @@
 import React, { Component } from 'react';
-import { Container, Input, Header, Button, Message } from 'semantic-ui-react';
+import {
+  Container, Input, Header, Button, Message,
+} from 'semantic-ui-react';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
 class Register extends Component {
-  state = {
-    username: '',
-    usernameError: '',
-    password: '',
-    passwordError: '',
-    email: '',
-    emailError: '',
+  constructor(props) {
+    super(props);
+    this.state = {
+      username: '',
+      usernameError: '',
+      password: '',
+      passwordError: '',
+      email: '',
+      emailError: '',
+    };
+    this.onChange = this.onChange.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
   }
 
-  onSubmit = async () => {
+  async onSubmit() {
     this.setState({
       usernameError: '',
       passwordError: '',
       emailError: '',
     });
     const { username, password, email } = this.state;
-    const response = await this.props.mutate({
+    const { mutate, history } = this.props;
+    const response = await mutate({
       variables: { username, password, email },
     });
     const { ok, errors } = response.data.register;
     if (ok) {
-      this.props.history.push('/');
+      history.push('/');
     } else {
       const err = {};
       errors.forEach(({ path, message }) => {
@@ -33,21 +41,22 @@ class Register extends Component {
       });
       this.setState(err);
     }
-    console.log(response);
   }
 
-  onChange = (e) => {
+  onChange(e) {
     const { name, value } = e.target;
     this.setState({ [name]: value });
   }
 
   render() {
-    const { username, email, password, usernameError, emailError, passwordError } = this.state;
+    const {
+      username, email, password, usernameError, emailError, passwordError,
+    } = this.state;
     const errorList = [];
     if (usernameError) errorList.push(usernameError);
     if (emailError) errorList.push(emailError);
     if (passwordError) errorList.push(passwordError);
-    
+
     return (
       <Container text>
         <Header as="h2">Register</Header>
@@ -55,17 +64,17 @@ class Register extends Component {
         <Input fluid placeholder="Email" value={email} onChange={this.onChange} name="email" error={!!emailError} />
         <Input fluid placeholder="Password" type="password" value={password} onChange={this.onChange} name="password" error={!!passwordError} />
         <Button onClick={this.onSubmit}>Submit</Button>
-        {errorList.length > 0 ? 
-          (
-            <Message 
-            error 
-            header="There were some errors in your submission"
-            list={errorList}
-          />
+        {errorList.length > 0
+          ? (
+            <Message
+              error
+              header="There were some errors in your submission"
+              list={errorList}
+            />
           ) : null
         }
       </Container>
-    )
+    );
   }
 }
 

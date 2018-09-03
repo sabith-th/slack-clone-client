@@ -9,6 +9,7 @@ module.exports = {
         "react/jsx-filename-extension": 0,
     },
     "globals": {
-        "document": 1
+        "document": 1,
+        "localStorage": 1
     }
 };
