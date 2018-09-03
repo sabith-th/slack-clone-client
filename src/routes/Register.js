@@ -64,7 +64,6 @@ class Register extends Component {
           />
           ) : null
         }
-        
       </Container>
     )
   }
