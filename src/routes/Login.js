@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import { extendObservable } from 'mobx';
-import { Container, Input, Header, Button } from 'semantic-ui-react';
+import {
+  Container, Input, Header, Button,
+} from 'semantic-ui-react';
 
 export default observer(class Login extends Component {
   constructor(props) {
@@ -10,15 +12,15 @@ export default observer(class Login extends Component {
       email: '',
       password: '',
     });
+    this.onChange = this.onChange.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
   }
 
-  onSubmit = () => {
+  onSubmit() {
     const { email, password } = this;
-    console.log(email);
-    console.log(password);
   }
 
-  onChange = e => {
+  onChange(e) {
     const { name, value } = e.target;
     this[name] = value;
   }
@@ -32,7 +34,6 @@ export default observer(class Login extends Component {
         <Input fluid placeholder="Password" type="password" value={password} onChange={this.onChange} name="password" />
         <Button onClick={this.onSubmit}>Submit</Button>
       </Container>
-    )
+    );
   }
-
 });
