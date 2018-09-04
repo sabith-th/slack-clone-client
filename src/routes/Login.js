@@ -4,7 +4,7 @@ import { extendObservable } from 'mobx';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import {
-  Container, Input, Header, Button,
+  Container, Input, Header, Button, Form, Message,
 } from 'semantic-ui-react';
 
 class Login extends Component {
@@ -13,6 +13,7 @@ class Login extends Component {
     extendObservable(this, {
       email: '',
       password: '',
+      errors: {},
     });
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -20,14 +21,25 @@ class Login extends Component {
 
   async onSubmit() {
     const { email, password } = this;
-    const { mutate } = this.props;
+    const { mutate, history } = this.props;
     const response = await mutate({
       variables: { email, password },
     });
-    const { ok, token, refreshToken } = response.data.login;
+
+    const {
+      ok, token, refreshToken, errors,
+    } = response.data.login;
+
     if (ok) {
       localStorage.setItem('token', token);
       localStorage.setItem('refreshToken', refreshToken);
+      history.push('/');
+    } else {
+      const err = {};
+      errors.forEach(({ path, message }) => {
+        err[`${path}Error`] = message;
+      });
+      this.errors = err;
     }
   }
 
@@ -37,13 +49,25 @@ class Login extends Component {
   }
 
   render() {
-    const { email, password } = this;
+    const { email, password, errors: { emailError, passwordError } } = this;
+    const errorList = [];
+    if (emailError) errorList.push(emailError);
+    if (passwordError) errorList.push(passwordError);
     return (
       <Container text>
         <Header as="h2">Login</Header>
-        <Input fluid placeholder="Email" value={email} onChange={this.onChange} name="email" />
-        <Input fluid placeholder="Password" type="password" value={password} onChange={this.onChange} name="password" />
-        <Button onClick={this.onSubmit}>Submit</Button>
+        <Form>
+          <Form.Field error={!!emailError}>
+            <Input fluid placeholder="Email" value={email} onChange={this.onChange} name="email" />
+          </Form.Field>
+          <Form.Field error={!!passwordError}>
+            <Input fluid placeholder="Password" type="password" value={password} onChange={this.onChange} name="password" />
+          </Form.Field>
+          <Button onClick={this.onSubmit}>Submit</Button>
+        </Form>
+        {errorList.length > 0
+          && <Message error header="There were some errors in your submission" list={errorList} />
+        }
       </Container>
     );
   }

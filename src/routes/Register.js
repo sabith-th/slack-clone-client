@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Container, Input, Header, Button, Message,
+  Container, Input, Header, Button, Message, Form,
 } from 'semantic-ui-react';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
@@ -60,18 +60,20 @@ class Register extends Component {
     return (
       <Container text>
         <Header as="h2">Register</Header>
-        <Input fluid placeholder="Username" value={username} onChange={this.onChange} name="username" error={!!usernameError} />
-        <Input fluid placeholder="Email" value={email} onChange={this.onChange} name="email" error={!!emailError} />
-        <Input fluid placeholder="Password" type="password" value={password} onChange={this.onChange} name="password" error={!!passwordError} />
-        <Button onClick={this.onSubmit}>Submit</Button>
+        <Form>
+          <Form.Field error={!!usernameError}>
+            <Input fluid placeholder="Username" value={username} onChange={this.onChange} name="username" />
+          </Form.Field>
+          <Form.Field error={!!emailError}>
+            <Input fluid placeholder="Email" value={email} onChange={this.onChange} name="email" />
+          </Form.Field>
+          <Form.Field error={!!passwordError}>
+            <Input fluid placeholder="Password" type="password" value={password} onChange={this.onChange} name="password" />
+          </Form.Field>
+          <Button onClick={this.onSubmit}>Submit</Button>
+        </Form>
         {errorList.length > 0
-          ? (
-            <Message
-              error
-              header="There were some errors in your submission"
-              list={errorList}
-            />
-          ) : null
+          && <Message error header="There were some errors in your submission" list={errorList} />
         }
       </Container>
     );
