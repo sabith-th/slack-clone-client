@@ -49,7 +49,11 @@ class Login extends Component {
   }
 
   render() {
-    const { email, password, errors: { emailError, passwordError } } = this;
+    const {
+      email,
+      password,
+      errors: { emailError, passwordError },
+    } = this;
     const errorList = [];
     if (emailError) errorList.push(emailError);
     if (passwordError) errorList.push(passwordError);
@@ -61,13 +65,20 @@ class Login extends Component {
             <Input fluid placeholder="Email" value={email} onChange={this.onChange} name="email" />
           </Form.Field>
           <Form.Field error={!!passwordError}>
-            <Input fluid placeholder="Password" type="password" value={password} onChange={this.onChange} name="password" />
+            <Input
+              fluid
+              placeholder="Password"
+              type="password"
+              value={password}
+              onChange={this.onChange}
+              name="password"
+            />
           </Form.Field>
           <Button onClick={this.onSubmit}>Submit</Button>
         </Form>
-        {errorList.length > 0
-          && <Message error header="There were some errors in your submission" list={errorList} />
-        }
+        {errorList.length > 0 && (
+          <Message error header="There were some errors in your submission" list={errorList} />
+        )}
       </Container>
     );
   }

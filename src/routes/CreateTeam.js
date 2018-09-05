@@ -44,7 +44,10 @@ class CreateTeam extends Component {
   }
 
   render() {
-    const { name, errors: { nameError } } = this;
+    const {
+      name,
+      errors: { nameError },
+    } = this;
     const errorList = [];
     if (nameError) errorList.push(nameError);
 
@@ -53,7 +56,13 @@ class CreateTeam extends Component {
         <Header as="h2">Create Team</Header>
         <Form>
           <Form.Field error={!!nameError}>
-            <Input fluid placeholder="Team Name" value={name} onChange={this.onChange} name="name" />
+            <Input
+              fluid
+              placeholder="Team Name"
+              value={name}
+              onChange={this.onChange}
+              name="name"
+            />
           </Form.Field>
           <Button onClick={this.onSubmit}>Submit</Button>
         </Form>
@@ -65,14 +74,14 @@ class CreateTeam extends Component {
 
 const createTeamMutation = gql`
   mutation($name: String!) {
-    createTeam(name: $name){
+    createTeam(name: $name) {
       ok
-      errors{
+      errors {
         path
         message
       }
     }
-  } 
+  }
 `;
 
 export default graphql(createTeamMutation)(observer(CreateTeam));

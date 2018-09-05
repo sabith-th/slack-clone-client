@@ -62,19 +62,32 @@ class Register extends Component {
         <Header as="h2">Register</Header>
         <Form>
           <Form.Field error={!!usernameError}>
-            <Input fluid placeholder="Username" value={username} onChange={this.onChange} name="username" />
+            <Input
+              fluid
+              placeholder="Username"
+              value={username}
+              onChange={this.onChange}
+              name="username"
+            />
           </Form.Field>
           <Form.Field error={!!emailError}>
             <Input fluid placeholder="Email" value={email} onChange={this.onChange} name="email" />
           </Form.Field>
           <Form.Field error={!!passwordError}>
-            <Input fluid placeholder="Password" type="password" value={password} onChange={this.onChange} name="password" />
+            <Input
+              fluid
+              placeholder="Password"
+              type="password"
+              value={password}
+              onChange={this.onChange}
+              name="password"
+            />
           </Form.Field>
           <Button onClick={this.onSubmit}>Submit</Button>
         </Form>
-        {errorList.length > 0
-          && <Message error header="There were some errors in your submission" list={errorList} />
-        }
+        {errorList.length > 0 && (
+          <Message error header="There were some errors in your submission" list={errorList} />
+        )}
       </Container>
     );
   }
@@ -86,7 +99,7 @@ const registerMutation = gql`
       ok
       errors {
         path
-        message 
+        message
       }
     }
   }
