@@ -4,21 +4,24 @@ import Channels from '../components/Channels';
 import Messages from '../components/Messages';
 import Header from '../components/Header';
 import Teams from '../components/Teams';
-import Input from '../components/Input';
+import SendMessage from '../components/SendMessage';
 
 export default () => (
   <AppLayout>
-    <Teams>Teams</Teams>
-    <Channels>Channels</Channels>
-    <Header>Header</Header>
+    <Teams teams={[{ id: 1, initial: 'A' }, { id: 2, initial: 'B' }]} />
+    <Channels
+      teamName="Avengers"
+      userName="Scarlett"
+      channels={[{ id: 1, name: 'general' }, { id: 2, name: 'random' }]}
+      users={[{ id: 1, name: 'Scarlett' }, { id: 2, name: 'Ella' }]}
+    />
+    <Header channelName="general" />
     <Messages>
       <ul className="message-list">
         <li>Item 1</li>
         <li>Item 2</li>
       </ul>
     </Messages>
-    <Input>
-      <input type="text" placeholder="Send a message" />
-    </Input>
+    <SendMessage channelName="general" />
   </AppLayout>
 );
