@@ -8,6 +8,7 @@ import Home from './Home';
 import Register from './Register';
 import Login from './Login';
 import CreateTeam from './CreateTeam';
+import ViewTeam from './ViewTeam';
 
 const isAuthenticated = () => {
   const token = localStorage.getItem('token');
@@ -35,6 +36,7 @@ export default () => (
       <Route path="/" exact component={Home} />
       <Route path="/register" exact component={Register} />
       <Route path="/login" exact component={Login} />
+      <Route path="/viewTeam" exact component={ViewTeam} />
       <PrivateRoute path="/createTeam" exact component={CreateTeam} />
     </Switch>
   </BrowserRouter>
