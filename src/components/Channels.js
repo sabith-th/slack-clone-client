@@ -44,7 +44,7 @@ const Green = styled.span`
 const Bubble = ({ on = true }) => (on ? <Green>●</Green> : '○');
 
 const channel = ({ id, name }) => (
-  <SideBarListItem key={`channel-${id}`}>{`#${name}`}</SideBarListItem>
+  <SideBarListItem key={`channel-${id}`}>{`# ${name}`}</SideBarListItem>
 );
 const user = ({ id, name }) => (
   <SideBarListItem key={`user-${id}`}>
