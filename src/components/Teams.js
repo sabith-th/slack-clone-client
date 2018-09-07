@@ -8,13 +8,35 @@ const TeamsWrapper = styled.div`
   color: #958993;
 `;
 
-const team = ({ id, initial }) => <li key={`team-${id}`}>{initial}</li>;
+const TeamList = styled.ul`
+  width: 100%;
+  padding-left: 0px;
+  list-style: none;
+`;
+
+const TeamListItem = styled.li`
+  height: 50px;
+  width: 50px;
+  background-color: #676066;
+  color: #fff;
+  margin: auto;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  border-radius: 11px;
+  &:hover {
+    border-style: solid;
+    border-width: thick;
+    border-color: #767676;
+  }
+`;
+
+const team = ({ id, initial }) => <TeamListItem key={`team-${id}`}>{initial}</TeamListItem>;
 
 export default ({ teams }) => (
   <TeamsWrapper>
-    <ul>
-      <li>Teams</li>
-      {teams.map(team)}
-    </ul>
+    <TeamList>{teams.map(team)}</TeamList>
   </TeamsWrapper>
 );
