@@ -3,15 +3,19 @@ import decode from 'jwt-decode';
 import Teams from '../components/Teams';
 import Channels from '../components/Channels';
 import AddChannelModal from '../components/AddChannelModal';
+import InvitePeopleModal from '../components/InvitePeopleModal';
 
 export default class Sidebar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       openAddChannelModal: false,
+      openInvitePeopleModal: false,
     };
     this.handleAddChannelClick = this.handleAddChannelClick.bind(this);
     this.handleCloseAddChannelModal = this.handleCloseAddChannelModal.bind(this);
+    this.handleInvitePeopleClick = this.handleInvitePeopleClick.bind(this);
+    this.handleCloseInvitePeopleModal = this.handleCloseInvitePeopleModal.bind(this);
   }
 
   handleAddChannelClick = () => {
@@ -26,9 +30,21 @@ export default class Sidebar extends React.Component {
     });
   };
 
+  handleInvitePeopleClick = () => {
+    this.setState({
+      openInvitePeopleModal: true,
+    });
+  };
+
+  handleCloseInvitePeopleModal = () => {
+    this.setState({
+      openInvitePeopleModal: false,
+    });
+  };
+
   render() {
     const { teams, team } = this.props;
-    const { openAddChannelModal } = this.state;
+    const { openAddChannelModal, openInvitePeopleModal } = this.state;
 
     let username = '';
     try {
@@ -48,12 +64,19 @@ export default class Sidebar extends React.Component {
           channels={team.channels}
           users={[{ id: 1, name: 'Scarlett' }, { id: 2, name: 'Ella' }]}
           onAddChannelClick={this.handleAddChannelClick}
+          onInvitePeopleClick={this.handleInvitePeopleClick}
         />
         <AddChannelModal
           teamId={team.id}
           open={openAddChannelModal}
           key="sidebar-add-channel-modal"
           onClose={this.handleCloseAddChannelModal}
+        />
+        <InvitePeopleModal
+          teamId={team.id}
+          open={openInvitePeopleModal}
+          key="sidebar-invite-people-modal"
+          onClose={this.handleCloseInvitePeopleModal}
         />
       </React.Fragment>
     );
