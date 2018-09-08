@@ -1,11 +1,11 @@
 import React from 'react';
-import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import findIndex from 'lodash/findIndex';
 import decode from 'jwt-decode';
 import Teams from '../components/Teams';
 import Channels from '../components/Channels';
 import AddChannelModal from '../components/AddChannelModal';
+import { allTeamsQuery } from '../graphql/team';
 
 class Sidebar extends React.Component {
   constructor(props) {
@@ -49,43 +49,33 @@ class Sidebar extends React.Component {
       ({ username } = user);
     } catch (error) {} // eslint-disable-line
 
-    return [
-      <Teams
-        key="team-sidebar"
-        teams={allTeams.map(t => ({
-          id: t.id,
-          initial: t.name.charAt(0).toUpperCase(),
-        }))}
-      />,
-      <Channels
-        key="channel-sidebar"
-        teamName={team.name}
-        userName={username}
-        channels={team.channels}
-        users={[{ id: 1, name: 'Scarlett' }, { id: 2, name: 'Ella' }]}
-        onAddChannelClick={this.handleAddChannelClick}
-      />,
-      <AddChannelModal
-        teamId={parseInt(currentTeamId, 10)}
-        open={openAddChannelModal}
-        key="sidebar-add-channel-modal"
-        onClose={this.handleCloseAddChannelModal}
-      />,
-    ];
+    return (
+      <React.Fragment>
+        <Teams
+          key="team-sidebar"
+          teams={allTeams.map(t => ({
+            id: t.id,
+            initial: t.name.charAt(0).toUpperCase(),
+          }))}
+        />
+        <Channels
+          key="channel-sidebar"
+          teamName={team.name}
+          userName={username}
+          teamId={team.id}
+          channels={team.channels}
+          users={[{ id: 1, name: 'Scarlett' }, { id: 2, name: 'Ella' }]}
+          onAddChannelClick={this.handleAddChannelClick}
+        />
+        <AddChannelModal
+          teamId={team.id}
+          open={openAddChannelModal}
+          key="sidebar-add-channel-modal"
+          onClose={this.handleCloseAddChannelModal}
+        />
+      </React.Fragment>
+    );
   }
 }
-
-const allTeamsQuery = gql`
-  {
-    allTeams {
-      id
-      name
-      channels {
-        id
-        name
-      }
-    }
-  }
-`;
 
 export default graphql(allTeamsQuery)(Sidebar);
