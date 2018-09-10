@@ -10,5 +10,15 @@ export const allTeamsQuery = gql`
         name
       }
     }
+    guestTeams {
+      id
+      name
+      channels {
+        id
+        name
+      }
+    }
   }
 `;
+
+export const dummyExport = {};

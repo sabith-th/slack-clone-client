@@ -12,34 +12,22 @@ export default class Sidebar extends React.Component {
       openAddChannelModal: false,
       openInvitePeopleModal: false,
     };
-    this.handleAddChannelClick = this.handleAddChannelClick.bind(this);
-    this.handleCloseAddChannelModal = this.handleCloseAddChannelModal.bind(this);
-    this.handleInvitePeopleClick = this.handleInvitePeopleClick.bind(this);
-    this.handleCloseInvitePeopleModal = this.handleCloseInvitePeopleModal.bind(this);
+    this.toggleAddChannelModal = this.toggleAddChannelModal.bind(this);
+    this.toggleInvitePeopleModal = this.toggleInvitePeopleModal.bind(this);
   }
 
-  handleAddChannelClick = () => {
-    this.setState({
-      openAddChannelModal: true,
-    });
+  toggleAddChannelModal = (e) => {
+    if (e) {
+      e.preventDefault();
+    }
+    this.setState(state => ({ openAddChannelModal: !state.openAddChannelModal }));
   };
 
-  handleCloseAddChannelModal = () => {
-    this.setState({
-      openAddChannelModal: false,
-    });
-  };
-
-  handleInvitePeopleClick = () => {
-    this.setState({
-      openInvitePeopleModal: true,
-    });
-  };
-
-  handleCloseInvitePeopleModal = () => {
-    this.setState({
-      openInvitePeopleModal: false,
-    });
+  toggleInvitePeopleModal = (e) => {
+    if (e) {
+      e.preventDefault();
+    }
+    this.setState(state => ({ openInvitePeopleModal: !state.openInvitePeopleModal }));
   };
 
   render() {
@@ -63,20 +51,20 @@ export default class Sidebar extends React.Component {
           teamId={team.id}
           channels={team.channels}
           users={[{ id: 1, name: 'Scarlett' }, { id: 2, name: 'Ella' }]}
-          onAddChannelClick={this.handleAddChannelClick}
-          onInvitePeopleClick={this.handleInvitePeopleClick}
+          onAddChannelClick={this.toggleAddChannelModal}
+          onInvitePeopleClick={this.toggleInvitePeopleModal}
         />
         <AddChannelModal
           teamId={team.id}
           open={openAddChannelModal}
           key="sidebar-add-channel-modal"
-          onClose={this.handleCloseAddChannelModal}
+          onClose={this.toggleAddChannelModal}
         />
         <InvitePeopleModal
           teamId={team.id}
           open={openInvitePeopleModal}
           key="sidebar-invite-people-modal"
-          onClose={this.handleCloseInvitePeopleModal}
+          onClose={this.toggleInvitePeopleModal}
         />
       </React.Fragment>
     );
