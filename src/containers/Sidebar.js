@@ -35,10 +35,12 @@ export default class Sidebar extends React.Component {
     const { openAddChannelModal, openInvitePeopleModal } = this.state;
 
     let username = '';
+    let isOwner = false;
     try {
       const token = localStorage.getItem('token');
       const { user } = decode(token);
       ({ username } = user);
+      isOwner = user.id === team.owner;
     } catch (error) {} // eslint-disable-line
 
     return (
@@ -49,6 +51,7 @@ export default class Sidebar extends React.Component {
           teamName={team.name}
           userName={username}
           teamId={team.id}
+          isOwner={isOwner}
           channels={team.channels}
           users={[{ id: 1, name: 'Scarlett' }, { id: 2, name: 'Ella' }]}
           onAddChannelClick={this.toggleAddChannelModal}

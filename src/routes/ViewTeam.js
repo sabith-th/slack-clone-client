@@ -3,7 +3,7 @@ import { graphql } from 'react-apollo';
 import findIndex from 'lodash/findIndex';
 import { Redirect } from 'react-router-dom';
 import AppLayout from '../components/AppLayout';
-import Messages from '../components/Messages';
+import MessageContainer from '../containers/MessageContainer';
 import Header from '../components/Header';
 import SendMessage from '../components/SendMessage';
 import Sidebar from '../containers/Sidebar';
@@ -42,15 +42,8 @@ const ViewTeam = ({
         team={team}
       />
       {channel && <Header channelName={channel.name} />}
-      {channel && (
-        <Messages channelId={channel.id}>
-          <ul className="message-list">
-            <li>Item 1</li>
-            <li>Item 2</li>
-          </ul>
-        </Messages>
-      )}
-      {channel && <SendMessage channelName={channel.name} />}
+      {channel && <MessageContainer channelId={channel.id} />}
+      {channel && <SendMessage channelName={channel.name} channelId={channel.id} />}
     </AppLayout>
   );
 };
