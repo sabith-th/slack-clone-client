@@ -20,24 +20,59 @@ const message = ({ id, text, user: { username } }, createdAt) => (
   </Comment>
 );
 
-const MessageContainer = ({ data: { loading, messages } }) => {
-  if (loading) {
-    return null;
+const newChannelMessageSubscription = gql`
+  subscription($channelId: Int!) {
+    newChannelMessage(channelId: $channelId) {
+      text
+      user {
+        id
+        username
+      }
+      id
+      created_at
+    }
   }
-  return (
-    <Messages>
-      <Comment.Group>
-        <Header as="h3" dividing>
-          Messages
-        </Header>
-        {messages.map((msg) => {
-          const createdAt = new Date(parseInt(msg.created_at, 10));
-          return message(msg, createdAt);
-        })}
-      </Comment.Group>
-    </Messages>
-  );
-};
+`;
+
+class MessageContainer extends React.Component {
+  componentWillMount() {
+    const { data, channelId } = this.props;
+    data.subscribeToMore({
+      document: newChannelMessageSubscription,
+      variables: {
+        channelId,
+      },
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData) {
+          return prev;
+        }
+        return {
+          ...prev,
+          messages: [...prev.messages, subscriptionData.data.newChannelMessage],
+        };
+      },
+    });
+  }
+
+  render() {
+    const {
+      data: { loading, messages },
+    } = this.props;
+    return loading ? null : (
+      <Messages>
+        <Comment.Group>
+          <Header as="h3" dividing>
+            Messages
+          </Header>
+          {messages.map((msg) => {
+            const createdAt = new Date(parseInt(msg.created_at, 10));
+            return message(msg, createdAt);
+          })}
+        </Comment.Group>
+      </Messages>
+    );
+  }
+}
 
 const messagesQuery = gql`
   query($channelId: Int!) {
