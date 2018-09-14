@@ -1,5 +1,4 @@
 import React from 'react';
-import decode from 'jwt-decode';
 import Teams from '../components/Teams';
 import Channels from '../components/Channels';
 import AddChannelModal from '../components/AddChannelModal';
@@ -31,17 +30,8 @@ export default class Sidebar extends React.Component {
   };
 
   render() {
-    const { teams, team } = this.props;
+    const { teams, team, username } = this.props;
     const { openAddChannelModal, openInvitePeopleModal } = this.state;
-
-    let username = '';
-    let isOwner = false;
-    try {
-      const token = localStorage.getItem('token');
-      const { user } = decode(token);
-      ({ username } = user);
-      isOwner = user.id === team.owner;
-    } catch (error) {} // eslint-disable-line
 
     return (
       <React.Fragment>
@@ -51,7 +41,7 @@ export default class Sidebar extends React.Component {
           teamName={team.name}
           userName={username}
           teamId={team.id}
-          isOwner={isOwner}
+          isOwner={team.admin}
           channels={team.channels}
           users={[{ id: 1, name: 'Scarlett' }, { id: 2, name: 'Ella' }]}
           onAddChannelClick={this.toggleAddChannelModal}
