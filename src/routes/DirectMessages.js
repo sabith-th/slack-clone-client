@@ -10,11 +10,10 @@ import SendMessage from '../components/SendMessage';
 import Sidebar from '../containers/Sidebar';
 import { meQuery } from '../graphql/team';
 
-const ViewTeam = ({
-  mutate,
+const DirectMessages = ({
   data: { loading, me },
   match: {
-    params: { teamId, channelId },
+    params: { teamId, userId },
   },
 }) => {
   if (loading) {
@@ -30,9 +29,6 @@ const ViewTeam = ({
   const teamIdInt = parseInt(teamId, 10);
   const teamIndex = teamIdInt ? findIndex(teams, ['id', teamIdInt]) : 0;
   const team = teamIndex === -1 ? teams[0] : teams[teamIndex];
-  const channelIdInt = parseInt(channelId, 10);
-  const channelIndex = channelIdInt ? findIndex(team.channels, ['id', channelIdInt]) : 0;
-  const channel = channelIndex === -1 ? team.channels[0] : team.channels[channelIndex];
 
   return (
     <AppLayout>
@@ -44,16 +40,9 @@ const ViewTeam = ({
         team={team}
         username={username}
       />
-      {channel && <Header channelName={channel.name} />}
-      {channel && <MessageContainer channelId={channel.id} />}
-      {channel && (
-        <SendMessage
-          placeholder={channel.name}
-          onSubmit={async (text) => {
-            await mutate({ variables: { text, channelId: channel.id } });
-          }}
-        />
-      )}
+      {/* <Header channelName={channel.name} />
+      <MessageContainer channelId={channel.id} /> */}
+      <SendMessage onSubmit={() => {}} placeholder={userId} />
     </AppLayout>
   );
 };
@@ -71,4 +60,4 @@ export default compose(
     },
   }),
   graphql(createMessageMutation),
-)(ViewTeam);
+)(DirectMessages);
