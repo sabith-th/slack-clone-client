@@ -4,13 +4,14 @@ import findIndex from 'lodash/findIndex';
 import { Redirect } from 'react-router-dom';
 import gql from 'graphql-tag';
 import AppLayout from '../components/AppLayout';
-import MessageContainer from '../containers/MessageContainer';
 import Header from '../components/Header';
 import SendMessage from '../components/SendMessage';
 import Sidebar from '../containers/Sidebar';
 import { meQuery } from '../graphql/team';
+import DirectMessageContainer from '../containers/DirectMessageContainer';
 
 const DirectMessages = ({
+  mutate,
   data: { loading, me },
   match: {
     params: { teamId, userId },
@@ -29,6 +30,7 @@ const DirectMessages = ({
   const teamIdInt = parseInt(teamId, 10);
   const teamIndex = teamIdInt ? findIndex(teams, ['id', teamIdInt]) : 0;
   const team = teamIndex === -1 ? teams[0] : teams[teamIndex];
+  const otherUserId = parseInt(userId, 10);
 
   return (
     <AppLayout>
@@ -40,16 +42,21 @@ const DirectMessages = ({
         team={team}
         username={username}
       />
-      {/* <Header channelName={channel.name} />
-      <MessageContainer channelId={channel.id} /> */}
-      <SendMessage onSubmit={() => {}} placeholder={userId} />
+      <Header channelName="Username" />
+      <DirectMessageContainer teamId={team.id} otherUserId={otherUserId} />
+      <SendMessage
+        onSubmit={async (text) => {
+          await mutate({ variables: { text, receiverId: otherUserId, teamId: team.id } });
+        }}
+        placeholder={userId}
+      />
     </AppLayout>
   );
 };
 
-const createMessageMutation = gql`
-  mutation($channelId: Int!, $text: String!) {
-    createMessage(channelId: $channelId, text: $text)
+const createDirectMessageMutation = gql`
+  mutation($receiverId: Int!, $teamId: Int!, $text: String!) {
+    createDirectMessage(receiverId: $receiverId, teamId: $teamId, text: $text)
   }
 `;
 
@@ -59,5 +66,5 @@ export default compose(
       fetchPolicy: 'network-only',
     },
   }),
-  graphql(createMessageMutation),
+  graphql(createDirectMessageMutation),
 )(DirectMessages);
