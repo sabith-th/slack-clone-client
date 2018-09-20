@@ -50,12 +50,14 @@ const channel = ({ id, name }, teamId) => (
     <SideBarListItem>{`# ${name}`}</SideBarListItem>
   </Link>
 );
-const user = ({ id, name }) => (
-  <SideBarListItem key={`user-${id}`}>
-    <Bubble />
-    {' '}
-    {name}
-  </SideBarListItem>
+const user = ({ id, username }, teamId) => (
+  <Link to={`/viewTeam/user/${teamId}/${id}`} key={`user-${id}`}>
+    <SideBarListItem>
+      <Bubble />
+      {' '}
+      {username}
+    </SideBarListItem>
+  </Link>
 );
 
 export default ({
@@ -90,7 +92,7 @@ export default ({
           Direct Messages
           <Icon name="add circle" onClick={onDirectMessageClick} />
         </SideBarListHeader>
-        {users.map(user)}
+        {users.map(u => user(u, teamId))}
       </SideBarList>
     </div>
     {isOwner && (
