@@ -3,6 +3,7 @@ import Teams from '../components/Teams';
 import Channels from '../components/Channels';
 import AddChannelModal from '../components/AddChannelModal';
 import InvitePeopleModal from '../components/InvitePeopleModal';
+import DirectMessageModal from '../components/DirectMessageModal';
 
 export default class Sidebar extends React.Component {
   constructor(props) {
@@ -10,9 +11,11 @@ export default class Sidebar extends React.Component {
     this.state = {
       openAddChannelModal: false,
       openInvitePeopleModal: false,
+      openDirectMessageModal: false,
     };
     this.toggleAddChannelModal = this.toggleAddChannelModal.bind(this);
     this.toggleInvitePeopleModal = this.toggleInvitePeopleModal.bind(this);
+    this.toggleDirectMessageModal = this.toggleDirectMessageModal.bind(this);
   }
 
   toggleAddChannelModal = (e) => {
@@ -29,9 +32,16 @@ export default class Sidebar extends React.Component {
     this.setState(state => ({ openInvitePeopleModal: !state.openInvitePeopleModal }));
   };
 
+  toggleDirectMessageModal = (e) => {
+    if (e) {
+      e.preventDefault();
+    }
+    this.setState(state => ({ openDirectMessageModal: !state.openDirectMessageModal }));
+  };
+
   render() {
     const { teams, team, username } = this.props;
-    const { openAddChannelModal, openInvitePeopleModal } = this.state;
+    const { openAddChannelModal, openInvitePeopleModal, openDirectMessageModal } = this.state;
 
     return (
       <React.Fragment>
@@ -46,6 +56,7 @@ export default class Sidebar extends React.Component {
           users={[{ id: 1, name: 'Scarlett' }, { id: 2, name: 'Ella' }]}
           onAddChannelClick={this.toggleAddChannelModal}
           onInvitePeopleClick={this.toggleInvitePeopleModal}
+          onDirectMessageClick={this.toggleDirectMessageModal}
         />
         <AddChannelModal
           teamId={team.id}
@@ -58,6 +69,12 @@ export default class Sidebar extends React.Component {
           open={openInvitePeopleModal}
           key="sidebar-invite-people-modal"
           onClose={this.toggleInvitePeopleModal}
+        />
+        <DirectMessageModal
+          teamId={team.id}
+          open={openDirectMessageModal}
+          key="sidebar-direct-message-modal"
+          onClose={this.toggleDirectMessageModal}
         />
       </React.Fragment>
     );
