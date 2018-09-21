@@ -20,60 +20,60 @@ const message = ({ id, text, sender: { username } }, createdAt) => (
   </Comment>
 );
 
-// const newChannelMessageSubscription = gql`
-//   subscription($channelId: Int!) {
-//     newChannelMessage(channelId: $channelId) {
-//       text
-//       user {
-//         id
-//         username
-//       }
-//       id
-//       created_at
-//     }
-//   }
-// `;
+const newDirectMessageSubscription = gql`
+  subscription($teamId: Int!, $otherUserId: Int!) {
+    newDirectMessage(teamId: $teamId, otherUserId: $otherUserId) {
+      text
+      sender {
+        username
+      }
+      id
+      created_at
+    }
+  }
+`;
 
 class DirectMessageContainer extends React.Component {
-  // componentWillMount() {
-  //   const { channelId } = this.props;
-  //   this.unsubscribe = this.subscribe(channelId);
-  // }
+  componentWillMount() {
+    const { teamId, otherUserId } = this.props;
+    this.unsubscribe = this.subscribe(teamId, otherUserId);
+  }
 
-  // componentWillReceiveProps({ channelId }) {
-  //   // eslint-disable-next-line react/destructuring-assignment
-  //   if (this.props.channelId === channelId) {
-  //     if (this.unsubscribe) {
-  //       this.unsubscribe();
-  //     }
-  //     this.unsubscribe = this.subscribe(channelId);
-  //   }
-  // }
+  componentWillReceiveProps({ teamId, otherUserId }) {
+    // eslint-disable-next-line react/destructuring-assignment
+    if (this.props.teamId !== teamId || this.props.otherUserId !== otherUserId) {
+      if (this.unsubscribe) {
+        this.unsubscribe();
+      }
+      this.unsubscribe = this.subscribe(teamId, otherUserId);
+    }
+  }
 
-  // componentWillUnmount() {
-  //   if (this.unsubscribe) {
-  //     this.unsubscribe();
-  //   }
-  // }
+  componentWillUnmount() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
+  }
 
-  // subscribe = (channelId) => {
-  //   const { data } = this.props;
-  //   return data.subscribeToMore({
-  //     document: newChannelMessageSubscription,
-  //     variables: {
-  //       channelId,
-  //     },
-  //     updateQuery: (prev, { subscriptionData }) => {
-  //       if (!subscriptionData) {
-  //         return prev;
-  //       }
-  //       return {
-  //         ...prev,
-  //         messages: [...prev.messages, subscriptionData.data.newChannelMessage],
-  //       };
-  //     },
-  //   });
-  // };
+  subscribe = (teamId, otherUserId) => {
+    const { data } = this.props;
+    return data.subscribeToMore({
+      document: newDirectMessageSubscription,
+      variables: {
+        teamId,
+        otherUserId,
+      },
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData) {
+          return prev;
+        }
+        return {
+          ...prev,
+          directMessages: [...prev.directMessages, subscriptionData.data.newDirectMessage],
+        };
+      },
+    });
+  };
 
   render() {
     const {

@@ -42,7 +42,7 @@ class MessageContainer extends React.Component {
 
   componentWillReceiveProps({ channelId }) {
     // eslint-disable-next-line react/destructuring-assignment
-    if (this.props.channelId === channelId) {
+    if (this.props.channelId !== channelId) {
       if (this.unsubscribe) {
         this.unsubscribe();
       }
