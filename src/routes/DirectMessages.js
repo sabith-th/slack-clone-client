@@ -12,7 +12,7 @@ import DirectMessageContainer from '../containers/DirectMessageContainer';
 
 const DirectMessages = ({
   mutate,
-  data: { loading, me },
+  data: { loading, me, getUser },
   match: {
     params: { teamId, userId },
   },
@@ -42,13 +42,33 @@ const DirectMessages = ({
         team={team}
         username={username}
       />
-      <Header channelName="Username" />
+      <Header channelName={getUser.username} />
       <DirectMessageContainer teamId={team.id} otherUserId={otherUserId} />
       <SendMessage
         onSubmit={async (text) => {
-          await mutate({ variables: { text, receiverId: otherUserId, teamId: team.id } });
+          await mutate({
+            variables: { text, receiverId: otherUserId, teamId: team.id },
+            optimisticResponse: {
+              createDirectMessage: true,
+            },
+            update: (store) => {
+              const data = store.readQuery({ query: meQuery });
+              const teamIndex2 = findIndex(data.me.teams, ['id', team.id]);
+              const notAlreadyThere = data.me.teams[teamIndex2].directMessageMembers.every(
+                member => member.id !== otherUserId,
+              );
+              if (notAlreadyThere) {
+                data.me.teams[teamIndex2].directMessageMembers.push({
+                  __typename: 'User',
+                  id: otherUserId,
+                  username: getUser.username,
+                });
+                store.writeQuery({ query: meQuery, data });
+              }
+            },
+          });
         }}
-        placeholder={userId}
+        placeholder={getUser.username}
       />
     </AppLayout>
   );
@@ -60,11 +80,39 @@ const createDirectMessageMutation = gql`
   }
 `;
 
+const directMessageMeQuery = gql`
+  query($userId: Int!) {
+    getUser(userId: $userId) {
+      username
+    }
+    me {
+      id
+      username
+      teams {
+        id
+        name
+        admin
+        directMessageMembers {
+          id
+          username
+        }
+        channels {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
 export default compose(
-  graphql(meQuery, {
-    options: {
+  graphql(directMessageMeQuery, {
+    options: props => ({
+      variables: {
+        userId: parseInt(props.match.params.userId, 10),
+      },
       fetchPolicy: 'network-only',
-    },
+    }),
   }),
   graphql(createDirectMessageMutation),
 )(DirectMessages);
