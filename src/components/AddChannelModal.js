@@ -8,6 +8,8 @@ import { compose, graphql } from 'react-apollo';
 import findIndex from 'lodash/findIndex';
 import { meQuery } from '../graphql/team';
 
+const ENTER_KEY = 13;
+
 const AddChannelModal = ({
   open,
   onClose,
@@ -16,8 +18,15 @@ const AddChannelModal = ({
   handleBlur,
   handleSubmit,
   isSubmitting,
+  resetForm,
 }) => (
-  <Modal open={open} onClose={onClose}>
+  <Modal
+    open={open}
+    onClose={(e) => {
+      resetForm();
+      onClose(e);
+    }}
+  >
     <Modal.Header>Create a new Channel</Modal.Header>
     <Modal.Content>
       <Form>
@@ -29,10 +38,22 @@ const AddChannelModal = ({
             value={values.name}
             onChange={handleChange}
             onBlur={handleBlur}
+            onKeyDown={(e) => {
+              if (e.keyCode === ENTER_KEY && !isSubmitting) {
+                handleSubmit(e);
+              }
+            }}
           />
         </Form.Field>
         <Form.Group widths="equal">
-          <Button fluid disabled={isSubmitting} onClick={onClose}>
+          <Button
+            fluid
+            disabled={isSubmitting}
+            onClick={(e) => {
+              resetForm();
+              onClose(e);
+            }}
+          >
             Cancel
           </Button>
           <Button fluid disabled={isSubmitting} onClick={handleSubmit} type="submit">

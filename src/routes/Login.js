@@ -33,7 +33,7 @@ class Login extends Component {
     if (ok) {
       localStorage.setItem('token', token);
       localStorage.setItem('refreshToken', refreshToken);
-      history.push('/');
+      history.push('/viewTeam');
     } else {
       const err = {};
       errors.forEach(({ path, message }) => {

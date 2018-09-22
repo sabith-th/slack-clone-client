@@ -1,11 +1,13 @@
 import React from 'react';
 import {
-  Modal, Input, Button, Form,
+  Modal, Input, Button, Form, Message,
 } from 'semantic-ui-react';
 import { withFormik } from 'formik';
 import gql from 'graphql-tag';
 import { compose, graphql } from 'react-apollo';
 import normalizeErrors from '../normalizeErrors';
+
+const ENTER_KEY = 13;
 
 const InvitePeopleModal = ({
   open,
@@ -17,8 +19,15 @@ const InvitePeopleModal = ({
   isSubmitting,
   touched,
   errors,
+  resetForm,
 }) => (
-  <Modal open={open} onClose={onClose}>
+  <Modal
+    open={open}
+    onClose={(e) => {
+      resetForm();
+      onClose(e);
+    }}
+  >
     <Modal.Header>Invite User to Team</Modal.Header>
     <Modal.Content>
       <Form>
@@ -30,11 +39,23 @@ const InvitePeopleModal = ({
             value={values.email}
             onChange={handleChange}
             onBlur={handleBlur}
+            onKeyDown={(e) => {
+              if (e.keyCode === ENTER_KEY && !isSubmitting) {
+                handleSubmit(e);
+              }
+            }}
           />
         </Form.Field>
-        {touched.email && errors.email ? errors.email[0] : null}
+        {touched.email && errors.email ? <Message content={errors.email[0]} color="red" /> : null}
         <Form.Group widths="equal">
-          <Button fluid disabled={isSubmitting} onClick={onClose}>
+          <Button
+            fluid
+            disabled={isSubmitting}
+            onClick={(e) => {
+              resetForm();
+              onClose(e);
+            }}
+          >
             Cancel
           </Button>
           <Button fluid disabled={isSubmitting} onClick={handleSubmit} type="submit">
@@ -78,7 +99,15 @@ export default compose(
         resetForm();
       } else {
         setSubmitting(false);
-        setErrors(normalizeErrors(errors));
+        setErrors(
+          normalizeErrors(
+            errors.map(
+              e => (e.message === 'user_id must be unique'
+                ? { path: 'email', message: 'This user is already part of the team' }
+                : e),
+            ),
+          ),
+        );
       }
     },
   }),
