@@ -3,6 +3,7 @@ import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import { Comment, Header } from 'semantic-ui-react';
 import Messages from '../components/Messages';
+import FileUpload from '../components/FileUpload';
 
 const message = ({ id, text, user: { username } }, createdAt) => (
   <Comment key={`message-${id}`}>
@@ -81,15 +82,17 @@ class MessageContainer extends React.Component {
     } = this.props;
     return loading ? null : (
       <Messages>
-        <Comment.Group>
-          <Header as="h3" dividing>
-            Messages
-          </Header>
-          {messages.map((msg) => {
-            const createdAt = new Date(parseInt(msg.created_at, 10));
-            return message(msg, createdAt);
-          })}
-        </Comment.Group>
+        <FileUpload disableClick>
+          <Comment.Group>
+            <Header as="h3" dividing>
+              Messages
+            </Header>
+            {messages.map((msg) => {
+              const createdAt = new Date(parseInt(msg.created_at, 10));
+              return message(msg, createdAt);
+            })}
+          </Comment.Group>
+        </FileUpload>
       </Messages>
     );
   }
