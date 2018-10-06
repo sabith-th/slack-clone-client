@@ -1,7 +1,7 @@
 import React from 'react';
-import styled from 'styled-components';
-import { Icon } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
+import { Icon } from 'semantic-ui-react';
+import styled from 'styled-components';
 
 const ChannelWrapper = styled.div`
   grid-column: 2;
@@ -50,12 +50,12 @@ const channel = ({ id, name }, teamId) => (
     <SideBarListItem>{`# ${name}`}</SideBarListItem>
   </Link>
 );
-const user = ({ id, username }, teamId) => (
+const dmChannel = ({ id, name }, teamId) => (
   <Link to={`/viewTeam/user/${teamId}/${id}`} key={`user-${id}`}>
     <SideBarListItem>
       <Bubble />
       {' '}
-      {username}
+      {name}
     </SideBarListItem>
   </Link>
 );
@@ -64,7 +64,7 @@ export default ({
   teamName,
   userName,
   channels,
-  users,
+  dmChannels,
   onAddChannelClick,
   teamId,
   isOwner,
@@ -92,7 +92,7 @@ export default ({
           Direct Messages
           <Icon name="add circle" onClick={onDirectMessageClick} />
         </SideBarListHeader>
-        {users.map(u => user(u, teamId))}
+        {dmChannels.map(dmC => dmChannel(dmC, teamId))}
       </SideBarList>
     </div>
     {isOwner && (

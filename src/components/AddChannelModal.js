@@ -1,11 +1,11 @@
-import React from 'react';
-import {
-  Modal, Input, Button, Form, Checkbox,
-} from 'semantic-ui-react';
 import { withFormik } from 'formik';
 import gql from 'graphql-tag';
-import { compose, graphql } from 'react-apollo';
 import findIndex from 'lodash/findIndex';
+import React from 'react';
+import { compose, graphql } from 'react-apollo';
+import {
+  Button, Checkbox, Form, Input, Modal,
+} from 'semantic-ui-react';
 import { meQuery } from '../graphql/team';
 import MultiSelectUser from './MultiSelectUser';
 
@@ -22,6 +22,7 @@ const AddChannelModal = ({
   resetForm,
   setFieldValue,
   teamId,
+  currentUserId,
 }) => (
   <Modal
     open={open}
@@ -51,7 +52,6 @@ const AddChannelModal = ({
         <Form.Field>
           <Checkbox
             label="Private"
-            value={!values.public}
             toggle
             onChange={(e, { checked }) => setFieldValue('public', !checked)}
           />
@@ -63,6 +63,7 @@ const AddChannelModal = ({
               handleChange={(e, { value }) => setFieldValue('members', value)}
               teamId={teamId}
               placeholder="Select members to invite"
+              currentUserId={currentUserId}
             />
           </Form.Field>
         )}
@@ -108,7 +109,10 @@ export default compose(
     ) => {
       await mutate({
         variables: {
-          teamId, name: values.name, public: values.public, members: values.members,
+          teamId,
+          name: values.name,
+          public: values.public,
+          members: values.members,
         },
         optimisticResponse: {
           createChannel: {

@@ -1,12 +1,12 @@
-import React from 'react';
-import { graphql, compose } from 'react-apollo';
-import findIndex from 'lodash/findIndex';
-import { Redirect } from 'react-router-dom';
 import gql from 'graphql-tag';
+import findIndex from 'lodash/findIndex';
+import React from 'react';
+import { compose, graphql } from 'react-apollo';
+import { Redirect } from 'react-router-dom';
 import AppLayout from '../components/AppLayout';
-import MessageContainer from '../containers/MessageContainer';
 import Header from '../components/Header';
 import SendMessage from '../components/SendMessage';
+import MessageContainer from '../containers/MessageContainer';
 import Sidebar from '../containers/Sidebar';
 import { meQuery } from '../graphql/team';
 
@@ -21,7 +21,7 @@ const ViewTeam = ({
     return null;
   }
 
-  const { teams, username } = me;
+  const { id: currentUserId, teams, username } = me;
 
   if (!teams.length) {
     return <Redirect to="/createTeam" />;
@@ -43,6 +43,7 @@ const ViewTeam = ({
         }))}
         team={team}
         username={username}
+        currentUserId={currentUserId}
       />
       {channel && <Header channelName={channel.name} />}
       {channel && <MessageContainer channelId={channel.id} />}
