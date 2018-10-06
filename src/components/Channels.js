@@ -51,7 +51,7 @@ const channel = ({ id, name }, teamId) => (
   </Link>
 );
 const dmChannel = ({ id, name }, teamId) => (
-  <Link to={`/viewTeam/user/${teamId}/${id}`} key={`user-${id}`}>
+  <Link to={`/viewTeam/${teamId}/${id}`} key={`user-${id}`}>
     <SideBarListItem>
       <Bubble />
       {' '}
