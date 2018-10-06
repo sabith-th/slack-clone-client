@@ -94,6 +94,7 @@ const createChannelMutation = gql`
       channel {
         id
         name
+        dm
       }
     }
   }
@@ -103,10 +104,7 @@ export default compose(
   graphql(createChannelMutation),
   withFormik({
     mapPropsToValues: () => ({ name: '', public: true, members: [] }),
-    handleSubmit: async (
-      values,
-      { props: { teamId, mutate, onClose }, setSubmitting, resetForm },
-    ) => {
+    handleSubmit: async (values, { props: { teamId, mutate, onClose }, resetForm }) => {
       await mutate({
         variables: {
           teamId,
@@ -122,6 +120,7 @@ export default compose(
               __typename: 'Channel',
               id: -1,
               name: values.name,
+              dm: false,
             },
           },
         },
@@ -137,7 +136,6 @@ export default compose(
         },
       });
       onClose();
-      setSubmitting(false);
       resetForm();
     },
   }),

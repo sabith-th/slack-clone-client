@@ -17,7 +17,7 @@ const ViewTeam = ({
     params: { teamId, channelId },
   },
 }) => {
-  if (loading) {
+  if (loading || !me) {
     return null;
   }
 

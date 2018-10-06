@@ -66,7 +66,14 @@ export default compose(
   graphql(getOrCreateDMChannelMutation),
   withFormik({
     mapPropsToValues: () => ({ members: [] }),
-    handleSubmit: async ({ members }, { props: { teamId, mutate, onClose }, resetForm }) => {
+    handleSubmit: async (
+      { members },
+      {
+        props: {
+          history, teamId, mutate, onClose,
+        }, resetForm,
+      },
+    ) => {
       await mutate({
         variables: { members, teamId },
         update: (store, { data: { getOrCreateDMChannel } }) => {
@@ -83,6 +90,7 @@ export default compose(
             });
             store.writeQuery({ query: meQuery, data });
           }
+          history.push(`/viewTeam/${teamId}/${id}`);
         },
       });
       onClose();
