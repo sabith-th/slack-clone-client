@@ -1,9 +1,9 @@
-import React from 'react';
 import gql from 'graphql-tag';
+import React from 'react';
 import { graphql } from 'react-apollo';
-import { Comment, Header } from 'semantic-ui-react';
-import Messages from '../components/Messages';
+import { Button, Comment, Header } from 'semantic-ui-react';
 import FileUpload from '../components/FileUpload';
+import Messages from '../components/Messages';
 
 const message = ({ id, text, user: { username } }, createdAt) => (
   <Comment key={`message-${id}`}>
@@ -36,6 +36,10 @@ const newChannelMessageSubscription = gql`
 `;
 
 class MessageContainer extends React.Component {
+  state = {
+    hasMoreItems: true,
+  };
+
   componentWillMount() {
     const { channelId } = this.props;
     this.unsubscribe = this.subscribe(channelId);
@@ -70,7 +74,7 @@ class MessageContainer extends React.Component {
         }
         return {
           ...prev,
-          messages: [...prev.messages, subscriptionData.data.newChannelMessage],
+          messages: [subscriptionData.data.newChannelMessage, ...prev.messages],
         };
       },
     });
@@ -78,8 +82,10 @@ class MessageContainer extends React.Component {
 
   render() {
     const {
-      data: { loading, messages },
+      data: { loading, messages, fetchMore },
+      channelId,
     } = this.props;
+    const { hasMoreItems } = this.state;
     return loading ? null : (
       <Messages>
         <FileUpload disableClick>
@@ -87,7 +93,34 @@ class MessageContainer extends React.Component {
             <Header as="h3" dividing>
               Messages
             </Header>
-            {messages.map((msg) => {
+            {hasMoreItems
+              && messages.length >= 35 && (
+                <Button
+                  onClick={() => {
+                    fetchMore({
+                      variables: {
+                        channelId,
+                        cursor: messages[messages.length - 1].created_at,
+                      },
+                      updateQuery: (previousResult, { fetchMoreResult }) => {
+                        if (!fetchMoreResult) {
+                          return previousResult;
+                        }
+                        if (fetchMoreResult.messages.length < 35) {
+                          this.setState({ hasMoreItems: false });
+                        }
+                        return {
+                          ...previousResult,
+                          messages: [...previousResult.messages, ...fetchMoreResult.messages],
+                        };
+                      },
+                    });
+                  }}
+                >
+                  Load More
+                </Button>
+            )}
+            {[...messages].reverse().map((msg) => {
               const createdAt = new Date(parseInt(msg.created_at, 10));
               return message(msg, createdAt);
             })}
@@ -99,8 +132,8 @@ class MessageContainer extends React.Component {
 }
 
 const messagesQuery = gql`
-  query($channelId: Int!) {
-    messages(channelId: $channelId) {
+  query($channelId: Int!, $cursor: String) {
+    messages(channelId: $channelId, cursor: $cursor) {
       text
       user {
         id
