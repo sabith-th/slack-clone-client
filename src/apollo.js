@@ -1,8 +1,8 @@
-import { ApolloClient } from 'apollo-client';
-import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
+import { ApolloClient } from 'apollo-client';
 import { ApolloLink, split } from 'apollo-link';
 import { setContext } from 'apollo-link-context';
+import { HttpLink } from 'apollo-link-http';
 import { WebSocketLink } from 'apollo-link-ws';
 import { getMainDefinition } from 'apollo-utilities';
 
@@ -36,6 +36,7 @@ const wsLink = new WebSocketLink({
   uri: 'ws://localhost:8080/graphql',
   options: {
     reconnect: true,
+    lazy: true,
     connectionParams: {
       token: localStorage.getItem('token') || null,
       refreshToken: localStorage.getItem('refreshToken') || null,

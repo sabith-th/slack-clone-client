@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import { observer } from 'mobx-react';
-import { extendObservable } from 'mobx';
-import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
+import { extendObservable } from 'mobx';
+import { observer } from 'mobx-react';
+import React, { Component } from 'react';
+import { graphql } from 'react-apollo';
 import {
-  Container, Input, Header, Button, Form, Message,
+  Button, Container, Form, Header, Input, Message,
 } from 'semantic-ui-react';
 
 class Login extends Component {
@@ -33,6 +33,7 @@ class Login extends Component {
     if (ok) {
       localStorage.setItem('token', token);
       localStorage.setItem('refreshToken', refreshToken);
+      window.location.reload();
       history.push('/viewTeam');
     } else {
       const err = {};
